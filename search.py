@@ -2,7 +2,7 @@ from typing import Dict, List, Any
 import chess
 import sys
 import time
-from search_logic import evaluate_board, move_value, check_end_game
+from evaluate import evaluate_board, move_value, check_end_game
 
 debug_info: Dict[str, Any] = {}
 
@@ -38,9 +38,9 @@ def get_ordered_moves(board: chess.Board) -> List[chess.Move]:
 
 def minimax_root(depth: int, board: chess.Board) -> chess.Move:
     maximize = board.turn == chess.WHITE
-    best_move = -float("inf")
+    best_move = float("inf")
     if not maximize:
-        best_move = float("inf")
+        best_move = -float("inf")
 
     moves = get_ordered_moves(board)
     best_move_found = moves[0]

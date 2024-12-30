@@ -1,6 +1,6 @@
 import chess
 import argparse
-from chess_logic import next_move
+from search import next_move
 
 def start():
     board = chess.Board()
