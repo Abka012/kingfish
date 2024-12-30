@@ -2,11 +2,11 @@ import chess
 
 piece_value = {
     chess.PAWN: 100,
-    chess.ROOK: 479,
-    chess.KNIGHT: 280,
-    chess.BISHOP: 320,
-    chess.QUEEN: 929,
-    chess.KING: 60000
+    chess.KNIGHT: 320,
+    chess.BISHOP: 330,
+    chess.ROOK: 500,
+    chess.QUEEN: 900,
+    chess.KING: 20000
 }
 
 pawnEvalWhite = [
@@ -94,20 +94,43 @@ kingEvalEndGameWhite = [
 kingEvalEndGameBlack = list(reversed(kingEvalEndGameWhite))
 
 def evaluate_piece(piece: chess.Piece, square: chess.Square, end_game: bool) -> int:
-    evaluation_tables = {
-        chess.PAWN: (pawnEvalWhite, pawnEvalBlack),
-        chess.KNIGHT: (knightEvalWhite, knightEvalBlack),
-        chess.BISHOP: (bishopEvalWhite, bishopEvalBlack),
-        chess.ROOK: (rookEvalWhite, rookEvalBlack),
-        chess.QUEEN: (queenEvalWhite, queenEvalBlack),
-        chess.KING: (
-            kingEvalWhite if not end_game else kingEvalEndGameWhite,
-            kingEvalBlack if not end_game else kingEvalEndGameBlack
-        )
-    }
-    mapping = evaluation_tables[piece.piece_type][0 if piece.color == chess.WHITE else 1]
-    return mapping[square]
+    piece_type = piece.piece_type
+    mapping = []
+    
+    if piece_type == chess.PAWN:
+        mapping = pawnEvalWhite if piece.color == chess.WHITE else pawnEvalBlack
+        if end_game and chess.RANK_NAMES['6', '7', '8']:
+            mapping[square] += 10  
+        
+    elif piece_type == chess.KNIGHT:
+        mapping = knightEvalWhite if piece.color == chess.WHITE else knightEvalBlack
+        if square and chess.D4 or chess.E4 or  chess.D5 or chess.E5:
+            mapping[square] += 20
 
+    elif piece_type == chess.BISHOP:
+        mapping = bishopEvalWhite if piece.color == chess.WHITE else bishopEvalBlack
+        if not end_game and (chess.A1 or chess.A8 or chess.H1 or chess.H8):
+            mapping[square] -= 10  
+
+    elif piece_type == chess.ROOK:
+        mapping = rookEvalWhite if piece.color == chess.WHITE else rookEvalBlack
+        if end_game and chess.RANK_NAMES['6', '7']:
+            mapping[square] += 30
+
+    elif piece_type == chess.QUEEN:
+        mapping = queenEvalWhite if piece.color == chess.WHITE else queenEvalBlack
+        if square and chess.D4 or chess.E4 or  chess.D5 or chess.E5:
+            mapping[square] += 30
+
+    elif piece_type == chess.KING:
+        if end_game:
+            mapping = kingEvalEndGameWhite if piece.color == chess.WHITE else kingEvalEndGameBlack
+        else:
+            mapping = kingEvalWhite if piece.color == chess.WHITE else kingEvalBlack
+        if end_game and chess.RANK_NAMES['5', '6', '7', '8']:
+            mapping[square] += 10
+
+    return mapping[square]
 
 def evaluate_capture(board: chess.Board, move: chess.Move) -> float:
     if board.is_en_passant(move):
@@ -173,18 +196,25 @@ def evaluate_board(board: chess.Board) -> float:
 
 def move_value(board: chess.Board, move: chess.Move) -> float:
     if move.promotion is not None:
-        return float("inf") if board.turn == chess.WHITE else -float("inf")
+        return -float("inf") if board.turn == chess.BLACK else float("inf")
 
     _piece = board.piece_at(move.from_square)
-    if not _piece:
-        raise ValueError(f"No piece found at square {move.from_square}")
+    if _piece:
+        _from_value = evaluate_piece(_piece, move.from_square, check_end_game(board))
+        _to_value = evaluate_piece(_piece, move.to_square, check_end_game(board))
+        position_change = _to_value - _from_value
+        print(f"Move {move} from {_from_value} to {_to_value}, position change: {position_change}")
+    else:
+        raise Exception(f"A piece was expected at {move.from_square}")
 
-    end_game = check_end_game(board)
-    position_change = (
-        evaluate_piece(_piece, move.to_square, end_game) -
-        evaluate_piece(_piece, move.from_square, end_game)
-    )
+    capture_value = 0.0
+    if board.is_capture(move):
+        capture_value = evaluate_capture(board, move)
+        print(f"Capture value: {capture_value}")
 
-    capture_value = evaluate_capture(board, move) if board.is_capture(move) else 0.0
     current_move_value = capture_value + position_change
-    return current_move_value if board.turn == chess.WHITE else -current_move_value
+    if board.turn == chess.BLACK:
+        current_move_value = -current_move_value
+
+    print(f"Move value for {move}: {current_move_value}")
+    return current_move_value
