@@ -93,102 +93,62 @@ kingEvalEndGameWhite = [
 ]
 kingEvalEndGameBlack = list(reversed(kingEvalEndGameWhite))
 
-def move_value(board: chess.Board, move: chess.Move, endgame: bool) -> float:
-    if move.promotion is not None:
-        return -float("inf") if board.turn == chess.BLACK else float("inf")
-
-    _piece = board.piece_at(move.from_square)
-    if _piece:
-        _from_value = evaluate_piece(_piece, move.from_square, endgame)
-        _to_value = evaluate_piece(_piece, move.to_square, endgame)
-        position_change = _to_value - _from_value
-    else:
-        raise Exception(f"A piece was expected at {move.from_square}")
-
-    capture_value = 0.0
-    if board.is_capture(move):
-        capture_value = evaluate_capture(board, move)
-
-    current_move_value = capture_value + position_change
-    if board.turn == chess.BLACK:
-        current_move_value = -current_move_value
-
-    return current_move_value
+def evaluate_piece(piece: chess.Piece, square: chess.Square, end_game: bool) -> int:
+    evaluation_tables = {
+        chess.PAWN: (pawnEvalWhite, pawnEvalBlack),
+        chess.KNIGHT: (knightEvalWhite, knightEvalBlack),
+        chess.BISHOP: (bishopEvalWhite, bishopEvalBlack),
+        chess.ROOK: (rookEvalWhite, rookEvalBlack),
+        chess.QUEEN: (queenEvalWhite, queenEvalBlack),
+        chess.KING: (
+            kingEvalWhite if not end_game else kingEvalEndGameWhite,
+            kingEvalBlack if not end_game else kingEvalEndGameBlack
+        )
+    }
+    mapping = evaluation_tables[piece.piece_type][0 if piece.color == chess.WHITE else 1]
+    return mapping[square]
 
 
 def evaluate_capture(board: chess.Board, move: chess.Move) -> float:
     if board.is_en_passant(move):
         return piece_value[chess.PAWN]
-    _to = board.piece_at(move.to_square)
-    _from = board.piece_at(move.from_square)
-    if _to is None or _from is None:
-        raise Exception(
-            f"Pieces were expected at _both_ {move.to_square} and {move.from_square}"
-        )
-    return piece_value[_to.piece_type] - piece_value[_from.piece_type]
+    captured_piece = board.piece_at(move.to_square)
+    capturing_piece = board.piece_at(move.from_square)
+    if captured_piece and capturing_piece:
+        return piece_value[captured_piece.piece_type] - piece_value[capturing_piece.piece_type]
+    return 0.0
 
-
-def evaluate_piece(piece: chess.Piece, square: chess.Square, end_game: bool) -> int:
-    piece_type = piece.piece_type
-    mapping = []
-    if piece_type == chess.PAWN:
-        mapping = pawnEvalWhite if piece.color == chess.WHITE else pawnEvalBlack
-    if piece_type == chess.KNIGHT:
-        mapping = knightEvalWhite if piece.color == chess.WHITE else knightEvalBlack
-    if piece_type == chess.BISHOP:
-        mapping = bishopEvalWhite if piece.color == chess.WHITE else bishopEvalBlack
-    if piece_type == chess.ROOK:
-        mapping = rookEvalWhite if piece.color == chess.WHITE else rookEvalBlack
-    if piece_type == chess.QUEEN:
-        mapping = queenEvalWhite if piece.color == chess.WHITE else queenEvalBlack
-    if piece_type == chess.KING:
-        if end_game:
-            mapping = (
-                kingEvalEndGameWhite
-                if piece.color == chess.WHITE
-                else kingEvalEndGameBlack
-            )
-        else:
-            mapping = kingEvalWhite if piece.color == chess.WHITE else kingEvalBlack
-
-    return mapping[square]
 
 def evaluate_king_safety(board: chess.Board, color: chess.Color) -> int:
     king_square = board.king(color)
-    pawn_shield = 0
-    
-    if king_square is None:  
-        return pawn_shield
+    if king_square is None:
+        return 0
 
     pawn_direction = 8 if color == chess.WHITE else -8
     shield_offsets = [pawn_direction, pawn_direction + 1, pawn_direction - 1]
+    pawn_shield = 0
 
     for offset in shield_offsets:
         shield_square = king_square + offset
-        if chess.A1 <= shield_square <= chess.H8:  
+        if chess.A1 <= shield_square <= chess.H8:
             piece = board.piece_at(shield_square)
             if piece and piece.piece_type == chess.PAWN and piece.color == color:
-                pawn_shield += 20     
+                pawn_shield += 20
 
     return pawn_shield
+
 
 def check_end_game(board: chess.Board) -> bool:
     queens = 0
     minors = 0
-
     for square in chess.SQUARES:
         piece = board.piece_at(square)
         if piece and piece.piece_type == chess.QUEEN:
             queens += 1
-        if piece and (
-            piece.piece_type == chess.BISHOP or piece.piece_type == chess.KNIGHT
-        ):
+        if piece and piece.piece_type in {chess.BISHOP, chess.KNIGHT}:
             minors += 1
+    return queens == 0 or (queens == 2 and minors <= 1)
 
-    if queens == 0 or (queens == 2 and minors <= 1):
-        return True
-
-    return False
 
 def evaluate_board(board: chess.Board) -> float:
     total = 0.0
@@ -206,5 +166,25 @@ def evaluate_board(board: chess.Board) -> float:
         total += evaluate_king_safety(board, chess.WHITE)
         total -= evaluate_king_safety(board, chess.BLACK)
 
-    total += len(list(board.legal_moves)) * 10
+    mobility = len(list(board.legal_moves))
+    total += mobility * 10 if board.turn == chess.WHITE else -mobility * 10
     return total
+
+
+def move_value(board: chess.Board, move: chess.Move) -> float:
+    if move.promotion is not None:
+        return float("inf") if board.turn == chess.WHITE else -float("inf")
+
+    _piece = board.piece_at(move.from_square)
+    if not _piece:
+        raise ValueError(f"No piece found at square {move.from_square}")
+
+    end_game = check_end_game(board)
+    position_change = (
+        evaluate_piece(_piece, move.to_square, end_game) -
+        evaluate_piece(_piece, move.from_square, end_game)
+    )
+
+    capture_value = evaluate_capture(board, move) if board.is_capture(move) else 0.0
+    current_move_value = capture_value + position_change
+    return current_move_value if board.turn == chess.WHITE else -current_move_value

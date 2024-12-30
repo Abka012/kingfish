@@ -28,7 +28,7 @@ def get_ordered_moves(board: chess.Board) -> List[chess.Move]:
     end_game = check_end_game(board)
 
     def orderer(move):
-        return move_value(board, move, end_game)
+        return move_value(board, move)
 
     in_order = sorted(
         board.legal_moves, key=orderer, reverse=(board.turn == chess.WHITE)
