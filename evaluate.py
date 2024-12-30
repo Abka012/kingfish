@@ -21,7 +21,7 @@ pawnEvalWhite = [
 ]
 pawnEvalBlack = list(reversed(pawnEvalWhite))
 
-knightEval = [
+knightEvalWhite = [
     -50,-40,-30,-30,-30,-30,-40,-50,
     -40,-20,  0,  0,  0,  0,-20,-40,
     -30,  0, 10, 15, 15, 10,  0,-30,
@@ -31,6 +31,7 @@ knightEval = [
     -40,-20,  0,  5,  5,  0,-20,-40,
     -50,-40,-30,-30,-30,-30,-40,-50
 ]
+knightEvalBlack = list(reversed(knightEvalWhite))
 
 bishopEvalWhite = [
     -20,-10,-10,-10,-10,-10,-10,-20,
@@ -56,7 +57,7 @@ rookEvalWhite = [
 ]
 rookEvalBlack = list(reversed(rookEvalWhite))
 
-queenEval = [
+queenEvalWhite = [
     -20,-10,-10, -5, -5,-10,-10,-20,
     -10,  0,  0,  0,  0,  0,  0,-10,
     -10,  0,  5,  5,  5,  5,  0,-10,
@@ -66,6 +67,7 @@ queenEval = [
     -10,  0,  5,  0,  0,  0,  0,-10,
     -20,-10,-10, -5, -5,-10,-10,-20
 ]
+queenEvalBlack = list(reversed(queenEvalWhite))
 
 kingEvalWhite = [
     -30,-40,-40,-50,-50,-40,-40,-30,
@@ -132,13 +134,13 @@ def evaluate_piece(piece: chess.Piece, square: chess.Square, end_game: bool) -> 
     if piece_type == chess.PAWN:
         mapping = pawnEvalWhite if piece.color == chess.WHITE else pawnEvalBlack
     if piece_type == chess.KNIGHT:
-        mapping = knightEval
+        mapping = knightEvalWhite if piece.color == chess.WHITE else knightEvalBlack
     if piece_type == chess.BISHOP:
         mapping = bishopEvalWhite if piece.color == chess.WHITE else bishopEvalBlack
     if piece_type == chess.ROOK:
         mapping = rookEvalWhite if piece.color == chess.WHITE else rookEvalBlack
     if piece_type == chess.QUEEN:
-        mapping = queenEval
+        mapping = queenEvalWhite if piece.color == chess.WHITE else queenEvalBlack
     if piece_type == chess.KING:
         if end_game:
             mapping = (
@@ -189,7 +191,7 @@ def check_end_game(board: chess.Board) -> bool:
     return False
 
 def evaluate_board(board: chess.Board) -> float:
-    total = 0
+    total = 0.0
     end_game = check_end_game(board)
 
     for square in chess.SQUARES:

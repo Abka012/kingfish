@@ -38,9 +38,7 @@ def get_ordered_moves(board: chess.Board) -> List[chess.Move]:
 
 def minimax_root(depth: int, board: chess.Board) -> chess.Move:
     maximize = board.turn == chess.WHITE
-    best_move = float("inf")
-    if not maximize:
-        best_move = -float("inf")
+    best_move = -float("inf") if not maximize else float("inf")
 
     moves = get_ordered_moves(board)
     best_move_found = moves[0]
@@ -52,10 +50,10 @@ def minimax_root(depth: int, board: chess.Board) -> chess.Move:
         else:
             value = minimax(depth - 1, board, -float("inf"), float("inf"), not maximize)
         board.pop()
-        if maximize and value >= best_move:
+        if maximize and value > best_move:
             best_move = value
             best_move_found = move
-        elif not maximize and value <= best_move:
+        elif not maximize and value < best_move:
             best_move = value
             best_move_found = move
 
@@ -96,7 +94,7 @@ def minimax(
             board.pop()
             alpha = max(alpha, best_move)
             if beta <= alpha:
-                return best_move
+                break
         return best_move
     else:
         best_move = float("inf")
@@ -115,5 +113,5 @@ def minimax(
             board.pop()
             beta = min(beta, best_move)
             if beta <= alpha:
-                return best_move
+                break
         return best_move
