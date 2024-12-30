@@ -10,6 +10,7 @@ debug_info: Dict[str, Any] = {}
 MATE_SCORE     = 1000000000
 MATE_THRESHOLD =  999000000
 
+transposition_table: Dict[str, float] = {}
 
 def next_move(depth: int, board: chess.Board, debug=True) -> chess.Move:
     debug_info.clear()
@@ -69,6 +70,10 @@ def minimax(
 ) -> float:
     debug_info["nodes"] += 1
 
+    board_fen = board.fen()
+    if board_fen in transposition_table:
+        return transposition_table[board_fen]
+
     if board.is_checkmate():
         return -MATE_SCORE if is_maximising_player else MATE_SCORE
     elif board.is_game_over():
@@ -95,6 +100,7 @@ def minimax(
             alpha = max(alpha, best_move)
             if beta <= alpha:
                 break
+        transposition_table[board_fen] = best_move
         return best_move
     else:
         best_move = float("inf")
@@ -114,4 +120,27 @@ def minimax(
             beta = min(beta, best_move)
             if beta <= alpha:
                 break
+        transposition_table[board_fen] = best_move
         return best_move
+
+
+def quiescence_search(board: chess.Board, alpha: float, beta: float) -> float:
+    stand_pat = evaluate_board(board)
+    if stand_pat >= beta:
+        return beta
+    if alpha < stand_pat:
+        alpha = stand_pat
+
+    for move in board.legal_moves:
+        if not board.is_capture(move):
+            continue
+        board.push(move)
+        score = -quiescence_search(board, -beta, -alpha)
+        board.pop()
+
+        if score >= beta:
+            return beta
+        if score > alpha:
+            alpha = score
+
+    return alpha
