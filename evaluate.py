@@ -11,85 +11,84 @@ piece_value = {
 
 pawnEvalWhite = [
     0,  0,  0,  0,  0,  0,  0,  0,
-    50, 50, 50, 50, 50, 50, 50, 50,
-    10, 10, 20, 30, 30, 20, 10, 10,
-    5,  5, 10, 25, 25, 10,  5,  5,
-    0,  0,  0, 20, 20,  0,  0,  0,
-    5, -5,-10,  0,  0,-10, -5,  5,
     5, 10, 10,-20,-20, 10, 10,  5,
+    5, -5,-10,  0,  0,-10, -5,  5,
+    0,  0,  0, 20, 20,  0,  0,  0,
+    5,  5, 10, 25, 25, 10,  5,  5,
+    10, 10, 20, 30, 30, 20, 10, 10,
+    50, 50, 50, 50, 50, 50, 50, 50,
     0,  0,  0,  0,  0,  0,  0,  0
 ]
 pawnEvalBlack = list(reversed(pawnEvalWhite))
 
 knightEvalWhite = [
-    -50,-40,-30,-30,-30,-30,-40,-50,
-    -40,-20,  0,  0,  0,  0,-20,-40,
-    -30,  0, 10, 15, 15, 10,  0,-30,
-    -30,  5, 15, 20, 20, 15,  5,-30,
-    -30,  0, 15, 20, 20, 15,  0,-30,
-    -30,  5, 10, 15, 15, 10,  5,-30,
-    -40,-20,  0,  5,  5,  0,-20,-40,
-    -50,-40,-30,-30,-30,-30,-40,-50
+    -50, -40, -30, -30, -30, -30, -40, -50,
+    -40, -20,   0,   5,   5,   0, -20, -40,
+    -30,   5,  10,  15,  15,  10,   5, -30,
+    -30,   0,  15,  20,  20,  15,   0, -30,
+    -30,   5,  15,  20,  20,  15,   5, -30,
+    -30,   0,  10,  15,  15,  10,   0, -30,
+    -40, -20,   0,   0,   0,   0, -20, -40,
+    -50, -40, -30, -30, -30, -30, -40, -50
 ]
 knightEvalBlack = list(reversed(knightEvalWhite))
 
 bishopEvalWhite = [
-    -20,-10,-10,-10,-10,-10,-10,-20,
-    -10,  0,  0,  0,  0,  0,  0,-10,
-    -10,  0,  5, 10, 10,  5,  0,-10,
-    -10,  5,  5, 10, 10,  5,  5,-10,
-    -10,  0, 10, 10, 10, 10,  0,-10,
-    -10, 10, 10, 10, 10, 10, 10,-10,
-    -10,  5,  0,  0,  0,  0,  5,-10,
-    -20,-10,-10,-10,-10,-10,-10,-20
+    -20, -10, -10, -10, -10, -10, -10, -20,
+    -10,   5,   0,   0,   0,   0,   5, -10,
+    -10,  10,  10,  10,  10,  10,  10, -10,
+    -10,   0,  10,  10,  10,  10,   0, -10,
+    -10,   5,   5,  10,  10,   5,   5, -10,
+    -10,   0,   5,  10,  10,   5,   0, -10,
+    -10,   0,   0,   0,   0,   0,   0, -10,
+    -20, -10, -10, -10, -10, -10, -10, -20
 ]
 bishopEvalBlack = list(reversed(bishopEvalWhite))
 
 rookEvalWhite = [
-    0,  0,  0,  0,  0,  0,  0,  0,
-    5, 10, 10, 10, 10, 10, 10,  5,
-   -5,  0,  0,  0,  0,  0,  0, -5,
-   -5,  0,  0,  0,  0,  0,  0, -5,
-   -5,  0,  0,  0,  0,  0,  0, -5,
-   -5,  0,  0,  0,  0,  0,  0, -5,
-   -5,  0,  0,  0,  0,  0,  0, -5,
-    0,  0,  0,  5,  5,  0,  0,  0
+    0,   0,   0,   5,   5,   0,   0,   0,
+   -5,   0,   0,   0,   0,   0,   0,  -5,
+   -5,   0,   0,   0,   0,   0,   0,  -5,
+   -5,   0,   0,   0,   0,   0,   0,  -5,
+   -5,   0,   0,   0,   0,   0,   0,  -5,
+   -5,   0,   0,   0,   0,   0,   0,  -5,
+    5,  10,  10,  10,  10,  10,  10,   5,
+    0,   0,   0,   0,   0,   0,   0,   0
 ]
 rookEvalBlack = list(reversed(rookEvalWhite))
 
 queenEvalWhite = [
-    -20,-10,-10, -5, -5,-10,-10,-20,
-    -10,  0,  0,  0,  0,  0,  0,-10,
-    -10,  0,  5,  5,  5,  5,  0,-10,
-    -5,  0,  5,  5,  5,  5,  0, -5,
-     0,  0,  5,  5,  5,  5,  0, -5,
-    -10,  5,  5,  5,  5,  5,  0,-10,
-    -10,  0,  5,  0,  0,  0,  0,-10,
-    -20,-10,-10, -5, -5,-10,-10,-20
+    -20, -10, -10,  -5,  -5, -10, -10, -20,
+    -10,   0,   5,   0,   0,   0,   0, -10,
+    -10,   5,   5,   5,   5,   5,   0, -10,
+      0,   0,   5,   5,   5,   5,   0,  -5,
+     -5,   0,   5,   5,   5,   5,   0,  -5,
+    -10,   0,   5,   5,   5,   5,   0, -10,
+    -10,   0,   0,   0,   0,   0,   0, -10,
+    -20, -10, -10,  -5,  -5, -10, -10, -20
 ]
 queenEvalBlack = list(reversed(queenEvalWhite))
 
 kingEvalWhite = [
-    -30,-40,-40,-50,-50,-40,-40,-30,
-    -30,-40,-40,-50,-50,-40,-40,-30,
-    -30,-40,-40,-50,-50,-40,-40,-30,
-    -30,-40,-40,-50,-50,-40,-40,-30,
-    -20,-30,-30,-40,-40,-30,-30,-20,
-    -10,-20,-20,-20,-20,-20,-20,-10,
-     20, 20,  0,  0,  0,  0, 20, 20,
-     20, 30, 10,  0,  0, 10, 30, 20
+     20,  30,  10,   0,   0,  10,  30,  20,
+     20,  20,   0,   0,   0,   0,  20,  20,
+    -10, -20, -20, -20, -20, -20, -20, -10,
+    -20, -30, -30, -40, -40, -30, -30, -20,
+    -30, -40, -40, -50, -50, -40, -40, -30,
+    -30, -40, -40, -50, -50, -40, -40, -30,
+    -30, -40, -40, -50, -50, -40, -40, -30,
+    -30, -40, -40, -50, -50, -40, -40, -30
 ]
 kingEvalBlack = list(reversed(kingEvalWhite))
 
 kingEvalEndGameWhite = [
-    -50,-40,-30,-20,-20,-30,-40,-50,
-    -30,-20,-10,  0,  0,-10,-20,-30,
-    -30,-10, 20, 30, 30, 20,-10,-30,
-    -30,-10, 30, 40, 40, 30,-10,-30,
-    -30,-10, 30, 40, 40, 30,-10,-30,
-    -30,-10, 20, 30, 30, 20,-10,-30,
-    -30,-30,  0,  0,  0,  0,-30,-30,
-    -50,-30,-30,-30,-30,-30,-30,-50 
+    -50, -30, -30, -30, -30, -30, -30, -50,
+    -30, -30,   0,   0,   0,   0, -30, -30,
+    -30, -10,  30,  40,  40,  30, -10, -30,
+    -30, -10,  30,  40,  40,  30, -10, -30,
+    -30, -10,  20,  30,  30,  20, -10, -30,
+    -30, -20, -10,   0,   0, -10, -20, -30,
+    -50, -40, -30, -20, -20, -30, -40, -50 
 ]
 kingEvalEndGameBlack = list(reversed(kingEvalEndGameWhite))
 
@@ -99,37 +98,29 @@ def evaluate_piece(piece: chess.Piece, square: chess.Square, end_game: bool) -> 
     
     if piece_type == chess.PAWN:
         mapping = pawnEvalWhite if piece.color == chess.WHITE else pawnEvalBlack
-        if end_game and chess.RANK_NAMES['6', '7', '8']:
-            mapping[square] += 10  
+         
         
     elif piece_type == chess.KNIGHT:
         mapping = knightEvalWhite if piece.color == chess.WHITE else knightEvalBlack
-        if square and chess.D4 or chess.E4 or  chess.D5 or chess.E5:
-            mapping[square] += 20
-
+        
     elif piece_type == chess.BISHOP:
         mapping = bishopEvalWhite if piece.color == chess.WHITE else bishopEvalBlack
-        if not end_game and (chess.A1 or chess.A8 or chess.H1 or chess.H8):
-            mapping[square] -= 10  
+          
 
     elif piece_type == chess.ROOK:
         mapping = rookEvalWhite if piece.color == chess.WHITE else rookEvalBlack
-        if end_game and chess.RANK_NAMES['6', '7']:
-            mapping[square] += 30
+        
 
     elif piece_type == chess.QUEEN:
         mapping = queenEvalWhite if piece.color == chess.WHITE else queenEvalBlack
-        if square and chess.D4 or chess.E4 or  chess.D5 or chess.E5:
-            mapping[square] += 30
+        
 
     elif piece_type == chess.KING:
         if end_game:
             mapping = kingEvalEndGameWhite if piece.color == chess.WHITE else kingEvalEndGameBlack
         else:
             mapping = kingEvalWhite if piece.color == chess.WHITE else kingEvalBlack
-        if end_game and chess.RANK_NAMES['5', '6', '7', '8']:
-            mapping[square] += 10
-
+        
     return mapping[square]
 
 def evaluate_capture(board: chess.Board, move: chess.Move) -> float:
@@ -202,7 +193,7 @@ def move_value(board: chess.Board, move: chess.Move) -> float:
     if _piece:
         _from_value = evaluate_piece(_piece, move.from_square, check_end_game(board))
         _to_value = evaluate_piece(_piece, move.to_square, check_end_game(board))
-        position_change = _to_value - _from_value
+        position_change = _from_value - _to_value
         print(f"Move {move} from {_from_value} to {_to_value}, position change: {position_change}")
     else:
         raise Exception(f"A piece was expected at {move.from_square}")
