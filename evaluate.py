@@ -11,7 +11,7 @@ piece_value = {
 
 pawnEvalWhite = [
     0,  0,  0,  0,  0,  0,  0,  0,
-    5, 10, 10,-20,-20, 10, 10,  5,
+    5, 10, 10, 20, 20, 10, 10,  5,
     5, -5,-10,  0,  0,-10, -5,  5,
     0,  0,  0, 20, 20,  0,  0,  0,
     5,  5, 10, 25, 25, 10,  5,  5,
@@ -98,7 +98,7 @@ def evaluate_piece(piece: chess.Piece, square: chess.Square, end_game: bool) -> 
     
     if piece_type == chess.PAWN:
         mapping = pawnEvalWhite if piece.color == chess.WHITE else pawnEvalBlack
-         
+                 
         
     elif piece_type == chess.KNIGHT:
         mapping = knightEvalWhite if piece.color == chess.WHITE else knightEvalBlack
@@ -120,7 +120,8 @@ def evaluate_piece(piece: chess.Piece, square: chess.Square, end_game: bool) -> 
             mapping = kingEvalEndGameWhite if piece.color == chess.WHITE else kingEvalEndGameBlack
         else:
             mapping = kingEvalWhite if piece.color == chess.WHITE else kingEvalBlack
-        
+
+           
     return mapping[square]
 
 def evaluate_capture(board: chess.Board, move: chess.Move) -> float:
@@ -177,8 +178,8 @@ def evaluate_board(board: chess.Board) -> float:
         total += value if piece.color == chess.WHITE else -value
 
     if not board.is_check():
-        total += evaluate_king_safety(board, chess.WHITE)
-        total -= evaluate_king_safety(board, chess.BLACK)
+        total += evaluate_king_safety(board, chess.WHITE) 
+        total -= evaluate_king_safety(board, chess.BLACK) 
 
     mobility = len(list(board.legal_moves))
     total += mobility * 10 if board.turn == chess.WHITE else -mobility * 10
@@ -193,7 +194,7 @@ def move_value(board: chess.Board, move: chess.Move) -> float:
     if _piece:
         _from_value = evaluate_piece(_piece, move.from_square, check_end_game(board))
         _to_value = evaluate_piece(_piece, move.to_square, check_end_game(board))
-        position_change = _from_value - _to_value
+        position_change = _from_value + _to_value
         print(f"Move {move} from {_from_value} to {_to_value}, position change: {position_change}")
     else:
         raise Exception(f"A piece was expected at {move.from_square}")
