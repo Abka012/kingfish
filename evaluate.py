@@ -129,7 +129,11 @@ def evaluate_capture(board: chess.Board, move: chess.Move) -> float:
         return piece_value[chess.PAWN]
     captured_piece = board.piece_at(move.to_square)
     capturing_piece = board.piece_at(move.from_square)
-    if captured_piece and capturing_piece:
+    if captured_piece:
+        if not capturing_piece:
+            raise ValueError(f"Capturing piece not found at {move.from_square}")
+        if move.to_square not in range(64):
+            raise ValueError(f"Invalid destination square {move.to_square} for capture.")
         return piece_value[captured_piece.piece_type] - piece_value[capturing_piece.piece_type]
     return 0.0
 
